@@ -21,11 +21,11 @@ if __name__ == '__main__':
     np.random.seed(40)
 
     
-    holiday_package_data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'holiday_package.csv')
+    holiday_package_data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'holiday_package_data.csv')
     package_sale_data = pd.read_csv( holiday_package_data_path )
     
-    holiday_package_df.replace('Fe Male','Female', inplace = True)
-    holiday_package_df = holiday_package_df.drop(columns = ['CustomerID'])
+    package_sale_data.replace('Fe Male','Female', inplace = True)
+    package_sale_data = package_sale_data.drop(columns = ['CustomerID'])
     
     numeric_features = ['Age', 'DurationOfPitch', 'MonthlyIncome']
     numeric_transformer = Pipeline(
@@ -33,17 +33,17 @@ if __name__ == '__main__':
 
     categorical_features = ['TypeofContact', 'Occupation', 'Gender', 'ProductPitched','MaritalStatus','Designation']
     categorical_transformer = Pipeline(
-    steps=[('imputer', SimpleImputer(strategy = 'mode')),('encoder', OneHotEncoder(handle_unknown = 'ignore'))
+    steps=[('imputer', SimpleImputer(strategy = 'most_frequent')),('encoder', OneHotEncoder(handle_unknown = 'ignore'))
     ])
     preprocessor = ColumnTransformer(
     transformers = [
         ("num", numeric_transformer, numeric_features),
         ("cat", categorical_transformer, categorical_features)
-    ], remainder = SimpleImputer(strategy = 'mode'))
+    ], remainder = SimpleImputer(strategy = 'most_frequent'))
     
-    X = holiday_package_df.drop(columns = ['ProdTaken'])
+    X = package_sale_data.drop(columns = ['ProdTaken'])
 
-    y = holiday_package_df['ProdTaken']
+    y = package_sale_data['ProdTaken']
       
     n_estimators = int(sys.argv[1]) if len(sys.argv) > 1 else 100
     min_samples_split = int(sys.argv[2]) if len(sys.argv) > 2 else 2
@@ -57,13 +57,13 @@ if __name__ == '__main__':
         X_train, X_test, y_train, y_test = train_test_split(X, y, stratify = y, test_size= 0.2, random_state = 123)
 
         clf.fit(X_train, y_train)
-        y_test =  clf.predict(X_test)
+        y_pred =  clf.predict(X_test)
         predictions_proba = clf.predict_proba(X_test)
         
-        test_accuracy = accuracy_score(y_test, predictions)
-        test_precision_score = precision_score(y_test, predictions)
-        test_recall_score = recall_score(y_test, predictions)
-        test_f1_score = f1_score(y_test, predictions)
+        test_accuracy = accuracy_score(y_test, y_pred)
+        test_precision_score = precision_score(y_test, y_pred)
+        test_recall_score = recall_score(y_test, y_pred)
+        test_f1_score = f1_score(y_test, y_pred)
         auc_score = roc_auc_score(y_test, predictions_proba[:,1])
         metrics = {'Test_accuracy': test_accuracy, 'Test_precision_score': test_precision_score,
                    'Test_recall_score': test_recall_score,'Test_f1_score': test_f1_score, 'AUC_score': auc_score}
@@ -77,4 +77,5 @@ if __name__ == '__main__':
         
         
 
+        
         
