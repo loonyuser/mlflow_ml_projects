@@ -1,1 +1,1 @@
-# mlflow_clf
+# MLFlow Project for Predicting Holiday Package Sale 
