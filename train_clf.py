@@ -51,7 +51,7 @@ if __name__ == '__main__':
     
     experiment_id = mlflow.create_experiment('Holiday_package_sale_prediction')
     mlflow.set_experiment('Holiday_package_sale_prediction')
-    with mlflow.start_run():          
+    with mlflow.start_run(experiment_id=experiment_id):          
         model = RandomForestClassifier(n_estimators = n_estimators, min_samples_split = min_samples_split, 
                                        min_samples_leaf = min_samples_leaf)
         pipe = Pipeline(steps = [('preprocessor', preprocessor), ('classifier', model)])
