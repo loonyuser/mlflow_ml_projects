@@ -10,7 +10,6 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 
 import mlflow
@@ -50,7 +49,7 @@ if __name__ == '__main__':
     min_samples_leaf  = int(sys.argv[3]) if len(sys.argv) > 3 else 2
     
     
-    with mlflow.start_run(experiment_id=experiment_id):          
+    with mlflow.start_run():          
         model = RandomForestClassifier(n_estimators = n_estimators, min_samples_split = min_samples_split, 
                                        min_samples_leaf = min_samples_leaf)
         pipe = Pipeline(steps = [('preprocessor', preprocessor), ('classifier', model)])
